@@ -1,6 +1,3 @@
-// netlify/functions/tmdb.js
-// This handles all TMDB API requests securely
-
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
@@ -20,7 +17,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Get the API key from environment variable (set in Netlify)
+  // Get the API key from environment variable
   const TMDB_KEY = process.env.TMDB_API_KEY;
   
   if (!TMDB_KEY) {
@@ -32,7 +29,6 @@ exports.handler = async (event, context) => {
   }
 
   // Get the endpoint from query parameters
-  // Example: /.netlify/functions/tmdb?endpoint=person/237254
   const { endpoint } = event.queryStringParameters || {};
 
   if (!endpoint) {
