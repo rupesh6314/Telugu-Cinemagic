@@ -35,35 +35,19 @@
       "Voot": "https://www.voot.com/"
     };
 
-    async function getTMDBVideoLink(movieId, movie) {
+    function getTrailerLink(movie) {
       const searchPrompts = [
         `${movie.title} Movie Trailer`,
         `${movie.title} Telugu Trailer`,
-        `${movie.title} Original Movie Trailer`,
-        `${movie.title} - Trailer`,
-        `${movie.title} 2.0 Trailer`,
-        `${movie.title} Release Trailer`,
-        `${movie.title} Movie Teaser`,
-        `${movie.title} ${language} Glimpse`,
-        `${movie.title} Official Trailer`,
-        `${movie.title} Theatrical Trailer`,
-        `${movie.title} Trailer`
+        `${movie.title} Official Trailer`
       ];
-
-      return {
-        link: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchPrompts.join(" OR "))}`,
-        text: "Search Trailer on YouTube"
-      };
+      return `https://www.youtube.com/results?search_query=${encodeURIComponent(searchPrompts.join(" OR "))}`;
     }
 
     function getFullMovieLink(movie) {
       const queries = [
         `${movie.title} full movie telugu`,
-        `${movie.title} full length HD movie`,
-        `${movie.title} super hit movie`,
-        `${movie.title} blockbuster movie`,
-        `${movie.title} ${movie.release_date?.slice(0,4)} full movie`,
-        `${movie.title} hero movie full`
+        `${movie.title} full length HD movie`
       ];
       return `https://www.youtube.com/results?search_query=${encodeURIComponent(queries.join(" OR "))}`;
     }
@@ -72,10 +56,12 @@
       try {
         // Fetch movie details
         const detailRes = await fetch(`${API_BASE}?endpoint=movie/${movieId}`);
+        if (!detailRes.ok) throw new Error('Failed to fetch movie details');
         const movie = await detailRes.json();
 
         // Fetch credits
         const creditsRes = await fetch(`${API_BASE}?endpoint=movie/${movieId}/credits`);
+        if (!creditsRes.ok) throw new Error('Failed to fetch credits');
         const credits = await creditsRes.json();
 
         // Fetch providers
@@ -99,7 +85,7 @@
         
         const cast = credits.cast.slice(0, 10).map(c => c.name).join(", ");
 
-        const trailer = await getTMDBVideoLink(movieId, movie);
+        const trailerLink = getTrailerLink(movie);
         const fullMovieLink = getFullMovieLink(movie);
 
         let ottHTML = "Not available on OTT";
@@ -141,7 +127,7 @@
           <p><strong>Rating:</strong> ${movie.vote_average ? movie.vote_average.toFixed(1) + "/10" : "N/A"}</p>
 
           <p><strong>Trailer:</strong>
-            <a href="${trailer.link}" target="_blank">${trailer.text}</a>
+            <a href="${trailerLink}" target="_blank">Search on YouTube</a>
           </p>
 
           <p><strong>Full Movie:</strong>
@@ -155,13 +141,20 @@
         
         document.querySelector('.loading').style.display = 'none';
       } catch (error) {
+        console.error('Error loading movie:', error);
         document.getElementById("movie-detail").innerHTML = 
-          '<p style="text-align:center;color:gold;">Failed to load movie details</p>';
+          `<p style="text-align:center;color:gold;">Failed to load movie details: ${error.message}</p>`;
         document.querySelector('.loading').style.display = 'none';
       }
     }
 
-    loadMovieDetails();
+    if (movieId) {
+      loadMovieDetails();
+    } else {
+      document.getElementById("movie-detail").innerHTML = 
+        '<p style="text-align:center;color:gold;">No movie ID provided</p>';
+      document.querySelector('.loading').style.display = 'none';
+    }
   </script>
 </body>
 </html>
