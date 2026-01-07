@@ -21,7 +21,7 @@
   <div id="music-list" class="hero-grid"></div>
 
   <script>
-    const TMDB_KEY = '8265bd1679663a7ea12ac168da84d2e8';
+    const API_BASE = '/api/tmdb';
     
     const music = [
       { id: 1139299, name: "Ghantasala" },
@@ -53,8 +53,9 @@
     async function loadMusic() {
       for (const m of music) {
         try {
-          const res = await fetch(`https://api.themoviedb.org/3/person/${m.id}?api_key=${TMDB_KEY}`);
+          const res = await fetch(`${API_BASE}?endpoint=person/${m.id}`);
           const data = await res.json();
+          
           const imageUrl = data.profile_path 
             ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
             : "https://via.placeholder.com/200x300?text=No+Image";
