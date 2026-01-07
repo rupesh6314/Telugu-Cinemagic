@@ -72,7 +72,7 @@
     async function loadClassics() {
       for (const c of classics) {
         try {
-          const res = await fetch(`${API_BASE}?endpoint=movie/${movieId}`)
+          const res = await fetch(`${API_BASE}?endpoint=movie/${c.id}`)
           const data = await res.json();
 
           const poster = data.poster_path

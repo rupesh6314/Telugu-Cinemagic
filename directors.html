@@ -72,7 +72,7 @@
     async function loadDirectors() {
       for (const d of directors) {
         try {
-          const res = await fetch(`${API_BASE}?endpoint=movie/${personId}`)
+          const res = await fetch(`${API_BASE}?endpoint=movie/${d.id}`)
           const data = await res.json();
           const imageUrl = data.profile_path 
             ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
