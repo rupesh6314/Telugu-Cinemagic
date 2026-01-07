@@ -1,0 +1,32 @@
+# netlify.toml
+# Netlify configuration file
+
+[build]
+  # Directory where your HTML files are located
+  publish = "."
+  
+  # Functions directory
+  functions = "netlify/functions"
+
+# Redirect /api/* to serverless functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# SPA fallback (optional - for single page apps)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin", "user"]}
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

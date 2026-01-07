@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="javascript:history.back()" class="back-link">← Back</a>
+  <h1 id="heroName">Movies</h1>
+  <div class="loading">Loading Movies...</div>
+  <div class="movies-grid" id="movies"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';
+    
+    (async () => {
+      try {
+        const params = new URLSearchParams(location.search);
+        const personId = params.get("personId");
+        const type = params.get("type");
+
+        if (!personId) return;
+
+        const res = await fetch(`${API_BASE}?endpoint=person/${personId}/movie_credits`);
+        const data = await res.json();
+
+        let movies = [];
+
+        if (type === "director") {
+          movies = data.crew.filter(m => m.job === "Director");
+        }
+        else if (type === "music") {
+          const musicJobs = [
+            'Original Music Composer',
+            'Music',
+            'Music Director',
+            'Composer',
+            'Score',
+            'Sound',
+            'Soundtrack',
+            'Background Score',
+            'Additional Music',
+            'Songs'
+          ];
+          movies = data.crew.filter(m => musicJobs.includes(m.job));
+        }
+        else {
+          movies = data.cast;
+        }
+
+        movies = removeDuplicateMovies(movies);
+
+        movies.sort((a, b) =>
+          (b.release_date || "").localeCompare(a.release_date || "")
+        );
+
+        const container = document.getElementById("movies");
+        container.innerHTML = "";
+
+        movies.forEach(movie => {
+          const img = movie.poster_path
+            ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+            : "https://via.placeholder.com/200x300?text=No+Image";
+
+          const div = document.createElement("div");
+          div.className = "movie-card";
+          div.innerHTML = `
+            <img src="${img}">
+            <h3>${movie.title} (${movie.release_date ? movie.release_date.slice(0,4) : "N/A"})</h3>
+          `;
+          div.onclick = () => {
+            location.href = `movie.html?movieId=${movie.id}&type=${type}`;
+          };
+
+          container.appendChild(div);
+        });
+        
+        document.querySelector('.loading').style.display = 'none';
+
+      } catch (err) {
+        document.getElementById("movies").innerHTML =
+          "<p style='text-align:center;color:gold;'>Unable to load movies</p>";
+      }
+    })();
+
+    function removeDuplicateMovies(movies) {
+      const unique = {};
+      movies.forEach(m => {
+        if (!unique[m.id]) unique[m.id] = m;
+      });
+      return Object.values(unique);
+    }
+  </script>
+</body>
+</html>

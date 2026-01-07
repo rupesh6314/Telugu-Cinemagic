@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telugu Cinema Heroines</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Famous Telugu Heroines</h1>
+  <div class="loading">Loading Heroines...</div>
+  <div id="heroines-list" class="hero-grid"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';    
+    const heroines = [
+      { id: 1166378, name: "Savitri" },
+      { id: 1034831, name: "Jamuna" },
+      { id: 109549, name: "Sridevi" },
+      { id: 238016, name: "Jayaprada" },
+      { id: 584418, name: "Jayasudha" },
+      { id: 584349, name: "Radha" },
+      { id: 540530, name: "Bhanupriya" },
+      { id: 141701, name: "Ramya Krishnan" },
+      { id: 549602, name: "Meena" },
+      { id: 237709, name: "Rambha" },
+      { id: 584838, name: "Indraja" },
+      { id: 584259, name: "VijayaShanthi" },
+      { id: 288587, name: "Soundarya" },
+      { id: 141705, name: "Simran" },
+      { id: 88167, name: "Anushka Shetty" },
+      { id: 85721, name: "Tamannaah Bhatia" },
+      { id: 113809, name: "Kajal Aggarwal" },
+      { id: 672620, name: "Arthi Agarwal" },
+      { id: 225312, name: "Samantha Ruth Prabhu" },
+      { id: 225388, name: "Nithya Menen" },
+      { id: 1470724, name: "Anupama Paremeswaran" },
+      { id: 1135119, name: "Lavanya Tripathi" },
+      { id: 557451, name: "Swathi Reddy" },
+      { id: 145628, name: "Shriya Saran" },
+      { id: 85883, name: "Shruthi Hassan" },
+      { id: 87358, name: "Genelia D'Souza" },
+      { id: 116925, name: "Trisha Krishnan" },
+      { id: 237040, name: "Ileana D'Cruz" },
+      { id: 120429, name: "Bhumika Chawla" },
+      { id: 1107197, name: "Priya Mani" },
+      { id: 123068, name: "Anjali" },
+      { id: 1210037, name: "Raashi Khanna" },
+      { id: 1473119, name: "Sai Pallavi" },
+      { id: 1752056, name: "Rashmika Mandanna" },
+      { id: 2243286, name: "Priyanka Mohan" },
+      { id: 1295762, name: "Keerthy Suresh" },
+      { id: 1725208, name: "Samyuktha" },
+      { id: 584595, name: "Pragya Jaiswal" },
+      { id: 1608576, name: "Rithu Varma" },
+      { id: 2504878, name: "Meenakshi Chaudhary" },
+      { id: 1143308, name: "Rakul Preet Singh" },
+      { id: 587753, name: "Pooja Hegde" },
+      { id: 1201819, name: "Eesha Rebba" },
+      { id: 1766034, name: "Mrunal Thakur" },
+      { id: 1670039, name: "Varsha Bollamma" },
+      { id: 2476557, name: "Sreeleela" },
+      { id: 2182257, name: "Srinidhi Shetty" },
+      { id: 1974970, name: "Janhvi Kapoor" },
+      { id: 1559686, name: "Nabha Netesh" },
+      { id: 2997847, name: "Faria Abdullah" },
+      { id: 2994460, name: "Vaishnavi Chaitanya" },
+      { id: 1114583, name: "Aishwarya Rajesh" },
+      { id: 1830991, name: "Nidhi Agarwal" },
+      { id: 544896, name: "Krithi Shetty" },
+      { id: 3727737, name: "Kavya Kalyanram" },
+      { id: 1142829, name: "Nivetha Thomas" },
+      { id: 2994489, name: "Ketika Sharma" }
+    ];
+
+    const container = document.getElementById("heroines-list");
+
+    async function loadHeroines() {
+      for (const h of heroines) {
+        try {
+          const res = await fetch(`${API_BASE}?endpoint=movie/${personId}`)
+          const data = await res.json();
+          const imageUrl = data.profile_path 
+            ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
+            : "https://via.placeholder.com/200x300?text=No+Image";
+
+          const div = document.createElement("div");
+          div.className = "hero-card";
+          div.innerHTML = `<img src="${imageUrl}" alt="${h.name}"><h3>${h.name}</h3>`;
+          div.onclick = () => { window.location.href = `movies.html?personId=${h.id}&type=heroine`; };
+          container.appendChild(div);
+        } catch (err) {
+          console.error("Error fetching data for", h.name, err);
+        }
+      }
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    loadHeroines();
+  </script>
+</body>
+</html>

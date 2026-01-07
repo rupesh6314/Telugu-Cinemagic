@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TFI Classics | Evergreen Telugu Cinema</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Evergreen Telugu Classics 🎞️</h1>
+  <p style="text-align:center;max-width:900px;margin:0 auto 30px;color:#ccc;">
+    These films are the backbone of Telugu cinema — inspiring generations of filmmakers, actors, and audiences.
+  </p>
+  <div class="loading">Loading Classics...</div>
+  <div class="hero-grid" id="classic-list"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';
+    const classics = [
+      { id: 158023, name: "Mayabazar" },
+      { id: 306373, name: "Devadasu (1953)" },
+      { id: 89838, name: "Pathala Bhairavi" },
+      { id: 86146, name: "Gundamma Katha" },
+      { id: 30088, name: "Sankarabharanam" },
+      { id: 30153, name: "Sagara Sangamam" },
+      { id: 86137, name: "Daana Veera Soora Karna" },
+      { id: 30344, name: "Swathi Muthyam" },
+      { id: 82770, name: "Sirivennela" },
+      { id: 86148, name: "Misamma" },
+      { id: 310622, name: "Alluri Seetharama Raju" },
+      { id: 109001, name: "Shiva" },
+      { id: 148808, name: "Geethanjali" },
+      { id: 269834, name: "Khaidi" },
+      { id: 66342, name: "RudraVeena" },
+      { id: 280363, name: "Aditya 369" },
+      { id: 80944, name: "Bhairava Dweepam" },
+      { id: 306962, name: "Yamagola" },
+      { id: 78840, name: "Pedarayudu" },
+      { id: 78596, name: "Gang Leader (1991)" },
+      { id: 80827, name: "SamaraSimha Reddy" },
+      { id: 25882, name: "Indra" },
+      { id: 77031, name: "Jagadeka Veerudu Athiloka Sundari" },
+      { id: 87681, name: "Major Chandrakanth" },
+      { id: 496698, name: "Hello Brother" },
+      { id: 82255, name: "Nuvvu Naaku Nachav" },
+      { id: 279478, name: "Intlo Illaalu Vantintlo Priyuraalu" },
+      { id: 112846, name: "TholiPrema (1998)" },
+      { id: 154913, name: "Anandh" },
+      { id: 82200, name: "Nuvve Kavali" },
+      { id: 81070, name: "Khushi" },
+      { id: 81082, name: "Malliswari" },
+      { id: 307907, name: "Naa Autograph" },
+      { id: 81051, name: "Godavari" },
+      { id: 199160, name: "Happy Days" },
+      { id: 155730, name: "Life is Beautiful" },
+      { id: 193197, name: "Seethamma Vaakitlo Sirimalle Chettu" },
+      { id: 253533, name: "Manam" },
+      { id: 459713, name: "Mahanati" },
+      { id: 592898, name: "Jersey" },
+      { id: 63430, name: "Ye Maya Chesavey" },
+      { id: 393841, name: "Pelli Choopulu" }
+    ];
+
+    const container = document.getElementById("classic-list");
+
+    async function loadClassics() {
+      for (const c of classics) {
+        try {
+          const res = await fetch(`${API_BASE}?endpoint=movie/${movieId}`)
+          const data = await res.json();
+
+          const poster = data.poster_path
+            ? `https://image.tmdb.org/t/p/w300${data.poster_path}`
+            : "https://via.placeholder.com/300x450?text=No+Image";
+          
+          const div = document.createElement("div");
+          div.className = "hero-card";
+          div.innerHTML = `
+            <img src="${poster}" alt="${c.name}">
+            <h3>${c.name}</h3>
+          `;
+          div.onclick = () => {
+            window.location.href = `movie.html?movieId=${c.id}&type=classic`;
+          };
+
+          container.appendChild(div);
+        } catch (e) {
+          console.error("Error loading", c.name);
+        }
+      }
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    loadClassics();
+  </script>
+</body>
+</html>

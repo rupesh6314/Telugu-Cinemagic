@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telugu Cinema Comedians</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Telugu Cinema Comedians (Heart of the Cinema)</h1>
+  <div class="loading">Loading Comedians...</div>
+  <div id="comedians-list" class="hero-grid"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';    
+    const comedians = [
+      { id: 113810, name: "Brahmanandam" },
+      { id: 1614192, name: "Relangi" },
+      { id: 586556, name: "Sudhakar" },
+      { id: 3263179, name: "Rajababu" },
+      { id: 584685, name: "Allu Ramalingaiah" },
+      { id: 141695, name: "Kota Srinivas Rao" },
+      { id: 148052, name: "M.S.Narayana" },
+      { id: 589654, name: "Ali Basha" },
+      { id: 584675, name: "Babu Mohan" },
+      { id: 1060290, name: "Krishna Bhagavan" },
+      { id: 1412713, name: "Saptagiri" },
+      { id: 213428, name: "Sunil" },
+      { id: 1332692, name: "L.B.Sriram" },
+      { id: 91549, name: "Vadivelu" },
+      { id: 584249, name: "Nagesh" },
+      { id: 1662036, name: "Chitti Babu" },
+      { id: 1208886, name: "Ramana Reddy" },
+      { id: 1751708, name: "Priya Darshi" },
+      { id: 1543712, name: "Sudharshan" },
+      { id: 1638514, name: "Viva Harsha Chemudu" },
+      { id: 1486677, name: "Master Bharath" },
+      { id: 146147, name: "Vennela Kishore" },
+      { id: 1007325, name: "Venu Madhav" },
+      { id: 1638503, name: "Satya" },
+      { id: 213432, name: "Brahmaji" },
+      { id: 586627, name: "Chandra Mohan" },
+      { id: 1430784, name: "Duvvasi Mohan" },
+      { id: 586629, name: "Rao Ramesh" },
+      { id: 1289123, name: "Thagubothu Ramesh" },
+      { id: 1911155, name: "Hyper Adhi" },
+      { id: 584684, name: "Rao Gopal Rao" },
+      { id: 146149, name: "Jaya Prakash Reddy" },
+      { id: 1439288, name: "Shakalaka Shankar" },
+      { id: 2120686, name: "GetUp Srinu" },
+      { id: 1060285, name: "Venu Thottempudi" },
+      { id: 1422555, name: "Fish Venkat" },
+      { id: 588032, name: "Narsing Yadav" }
+    ];
+
+    const container = document.getElementById("comedians-list");
+
+    async function loadComedians() {
+      for (const c of comedians) {
+        try {
+          const res = await fetch(`${API_BASE}?endpoint=movie/${personId}`)
+          const data = await res.json();
+          const imageUrl = data.profile_path 
+            ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
+            : "https://via.placeholder.com/200x300?text=No+Image";
+
+          const div = document.createElement("div");
+          div.className = "hero-card";
+          div.innerHTML = `<img src="${imageUrl}" alt="${c.name}"><h3>${c.name}</h3>`;
+          div.onclick = () => { window.location.href = `movies.html?personId=${c.id}&type=comedian`; };
+          container.appendChild(div);
+        } catch (err) {
+          console.error("Error fetching data for", c.name, err);
+        }
+      }
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    loadComedians();
+  </script>
+</body>
+</html>

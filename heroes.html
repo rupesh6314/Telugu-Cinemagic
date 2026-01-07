@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telugu Cinema Heroes</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Telugu Cinema Heroes</h1>
+  <div class="loading">Loading Heroes...</div>
+  <div id="heroes-list" class="hero-grid"></div>
+
+  <script>
+    // No API key needed in frontend! 🔒
+    const API_BASE = '/api/tmdb';
+    
+    const heroes = [
+      { id: 237254, name: "Akkineni Nageswara Rao (ANR)" },
+      { id: 1003933, name: "N. T. Rama Rao" },
+      { id: 1003966, name: "S. V. Ranga Rao" },
+      { id: 1208884, name: "Kanta Rao" },
+      { id: 1470750, name: "Krishna" },
+      { id: 1208885, name: "Sobhan Babu" },
+      { id: 1335737, name: "Krishnam Raju" },
+      { id: 147079, name: "Chiranjeevi" },
+      { id: 150529, name: "Balakrishna" },
+      { id: 149958, name: "Nagarjuna" },
+      { id: 88166, name: "Venkatesh" },
+      { id: 585268, name: "Mohan Babu" },
+      { id: 91555, name: "Rajinikanth" },
+      { id: 93193, name: "Kamal Hassan" },
+      { id: 545595, name: "Rajendra Prasad" },
+      { id: 465273, name: "Jagapathi Babu" },
+      { id: 1003981, name: "Srikanth" },
+      { id: 146148, name: "Sai Kumar" },
+      { id: 146936, name: "SriHari" },
+      { id: 590744, name: "Dr. Rajasekhar" },
+      { id: 584669, name: "Tarun" },
+      { id: 237713, name: "Uday Kiran" },
+      { id: 436960, name: "Sumanth" },
+      { id: 237048, name: "Pawan Kalyan" },
+      { id: 116924, name: "Mahesh Babu" },
+      { id: 148037, name: "Jr. NTR" },
+      { id: 237045, name: "Prabhas" },
+      { id: 237325, name: "Gopichand" },
+      { id: 147023, name: "Ram Charan" },
+      { id: 108215, name: "Allu Arjun" },
+      { id: 146935, name: "Ravi Teja" },
+      { id: 225387, name: "Nani" },
+      { id: 237993, name: "Allari Naresh" },
+      { id: 1065421, name: "Kalyan Ram" },
+      { id: 237052, name: "Naga Chaitanya" },
+      { id: 85720, name: "Suriya" },
+      { id: 123066, name: "Karthi" },
+      { id: 550165, name: "Dhanush" },
+      { id: 215910, name: "Rana Daggubati" },
+      { id: 1508809, name: "Vijay Deverakonda" },
+      { id: 930183, name: "Nikhil Siddartha" },
+      { id: 1013090, name: "Manchu Manoj" },
+      { id: 1060293, name: "Manchu Vishnu" },
+      { id: 1418726, name: "Sampoornesh Babu" },
+      { id: 1001828, name: "Nithin" },
+      { id: 1291761, name: "Adivi Sesh" },
+      { id: 544986, name: "Ram Pothineni" },
+      { id: 588007, name: "Sharwanand" },
+      { id: 1825808, name: "Bellamkonda Sreenivas" },
+      { id: 1011802, name: "Sundeep Kishan" },
+      { id: 1407562, name: "Varun Tej" },
+      { id: 1386112, name: "Sai Durga Tej" },
+      { id: 1168398, name: "Allu Sirish" },
+      { id: 1400656, name: "Naga Shaurya" },
+      { id: 2192356, name: "Naveen Polishetty" },
+      { id: 1751749, name: "Sree Vishnu" },
+      { id: 1893251, name: "Vishwak Sen" },
+      { id: 1544304, name: "Akhil Akkineni" },
+      { id: 1334882, name: "Kartikeya" },
+      { id: 931864, name: "Siddu Jonnalagadda" },
+      { id: 2045437, name: "Kiran Abbavaram" },
+      { id: 2527498, name: "Teja Sajja" },
+      { id: 2421034, name: "Vaishnav Tej" },
+      { id: 1979856, name: "Anand Deverakonda" }
+    ];
+
+    const container = document.getElementById("heroes-list");
+
+    async function loadHeroes() {
+      for (const h of heroes) {
+        try {
+          // Call Netlify function instead of TMDB directly
+          const res = await fetch(`${API_BASE}?endpoint=person/${h.id}`);
+          const data = await res.json();
+          
+          const imageUrl = data.profile_path 
+            ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
+            : "https://via.placeholder.com/200x300?text=No+Image";
+
+          const div = document.createElement("div");
+          div.className = "hero-card";
+          div.innerHTML = `<img src="${imageUrl}" alt="${h.name}"><h3>${h.name}</h3>`;
+          div.onclick = () => { window.location.href = `movies.html?personId=${h.id}&type=hero`; };
+          container.appendChild(div);
+        } catch (err) {
+          console.error("Error fetching data for", h.name, err);
+        }
+      }
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    loadHeroes();
+  </script>
+</body>
+</html>

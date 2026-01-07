@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telugu Cinema Directors</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <h1>Telugu Cinema Visionary Directors</h1>
+  <div class="loading">Loading Directors...</div>
+  <div id="directors-list" class="hero-grid"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';    
+    const directors = [
+      { id: 1025757, name: "Bapu" },
+      { id: 544978, name: "K. Viswanath" },
+      { id: 1335262, name: "Dasari Narayana Rao" },
+      { id: 237252, name: "K. Raghavendra Rao" },
+      { id: 78747, name: "Mani Ratnam" },
+      { id: 76813, name: "Ram Gopal Varma" },
+      { id: 932629, name: "Krishna Vamsi" },
+      { id: 116923, name: "Trivikram Srinivas" },
+      { id: 147021, name: "S. S. Rajamouli" },
+      { id: 150527, name: "Boyapati Srinu" },
+      { id: 237051, name: "Sukumar" },
+      { id: 545155, name: "Harish Shankar" },
+      { id: 148034, name: "V. V. Vinayak" },
+      { id: 1168111, name: "Koratala Siva" },
+      { id: 565889, name: "Ravi Babu" },
+      { id: 1879517, name: "Sandeep Reddy Vanga" },
+      { id: 1454674, name: "Sujeeth" },
+      { id: 1173569, name: "Srikanth Addala" },
+      { id: 3271589, name: "Srikanth Odela" },
+      { id: 1380060, name: "Chandoo Mondeti" },
+      { id: 119891, name: "Puri Jagannadh" },
+      { id: 1473728, name: "Anil Ravipudi" },
+      { id: 1107021, name: "Sreenu Vaitla" },
+      { id: 565890, name: "Tanikella Bharani" },
+      { id: 215917, name: "Sekhar Kammula" },
+      { id: 1964726, name: "Vivek Athreya" },
+      { id: 1967161, name: "Prasanth Varma" },
+      { id: 1673599, name: "Tharun Bhascker" },
+      { id: 1963839, name: "venky Kudumla" },
+      { id: 1013089, name: "Krish Jagarlamudi" },
+      { id: 938964, name: "Parasuram" },
+      { id: 679452, name: "Bommarillu Bhaskar" },
+      { id: 1966148, name: "Venky Atluri" },
+      { id: 2421032, name: "Buchi Babu Sana" },
+      { id: 3853592, name: "Shouryuv" },
+      { id: 1943117, name: "Gowtham Tinnanuri" },
+      { id: 1107230, name: "B Gopal" },
+      { id: 89154, name: "Prabhu Deva" },
+      { id: 1471076, name: "Karthik Ghattamaneni" },
+      { id: 1135092, name: "Hanu Raghavapudi" },
+      { id: 1508808, name: "Nag Ashwin" },
+      { id: 1975896, name: "Anudeep KV" },
+      { id: 516473, name: "Raghava Lawrence" },
+      { id: 2551825, name: "Sailesh Kolanu" },
+      { id: 2592520, name: "Sandeep Raj" }
+    ];
+
+    const container = document.getElementById("directors-list");
+
+    async function loadDirectors() {
+      for (const d of directors) {
+        try {
+          const res = await fetch(`${API_BASE}?endpoint=movie/${personId}`)
+          const data = await res.json();
+          const imageUrl = data.profile_path 
+            ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
+            : "https://via.placeholder.com/200x300?text=No+Image";
+
+          const div = document.createElement("div");
+          div.className = "hero-card";
+          div.innerHTML = `<img src="${imageUrl}" alt="${d.name}"><h3>${d.name}</h3>`;
+          div.onclick = () => { window.location.href = `movies.html?personId=${d.id}&type=director`; };
+          container.appendChild(div);
+        } catch (err) {
+          console.error("Error fetching data for", d.name, err);
+        }
+      }
+      document.querySelector('.loading').style.display = 'none';
+    }
+
+    loadDirectors();
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Details</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #0b0f1a, #020409); color: #fff; min-height: 100vh; }
+    .back-link { display: inline-block; margin: 20px 30px; padding: 10px 20px; background: gold; color: #000; text-decoration: none; border-radius: 20px; font-weight: bold; }
+    .back-link:hover { background: #fff; }
+  </style>
+</head>
+<body>
+  <a href="javascript:history.back()" class="back-link">← Back</a>
+  <div class="loading">Loading Movie Details...</div>
+  <div id="movie-detail" class="movie-detail-container"></div>
+
+  <script>
+    const API_BASE = '/api/tmdb';
+    
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get("movieId");
+    const type = params.get("type");
+
+    const ottLinks = {
+      "Netflix": "https://www.netflix.com/in/",
+      "Amazon Prime Video": "https://www.primevideo.com/",
+      "Disney Plus": "https://www.disneyplus.com/",
+      "Hotstar": "https://www.hotstar.com/in",
+      "Sony LIV": "https://www.sonyliv.com/",
+      "ZEE5": "https://www.zee5.com/",
+      "Apple TV+": "https://tv.apple.com/",
+      "HBO Max": "https://www.hbomax.com/",
+      "Voot": "https://www.voot.com/"
+    };
+
+    async function getTMDBVideoLink(movieId, movie) {
+      const searchPrompts = [
+        `${movie.title} Movie Trailer`,
+        `${movie.title} Telugu Trailer`,
+        `${movie.title} Original Movie Trailer`,
+        `${movie.title} - Trailer`,
+        `${movie.title} 2.0 Trailer`,
+        `${movie.title} Release Trailer`,
+        `${movie.title} Movie Teaser`,
+        `${movie.title} ${language} Glimpse`,
+        `${movie.title} Official Trailer`,
+        `${movie.title} Theatrical Trailer`,
+        `${movie.title} Trailer`
+      ];
+
+      return {
+        link: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchPrompts.join(" OR "))}`,
+        text: "Search Trailer on YouTube"
+      };
+    }
+
+    function getFullMovieLink(movie) {
+      const queries = [
+        `${movie.title} full movie telugu`,
+        `${movie.title} full length HD movie`,
+        `${movie.title} super hit movie`,
+        `${movie.title} blockbuster movie`,
+        `${movie.title} ${movie.release_date?.slice(0,4)} full movie`,
+        `${movie.title} hero movie full`
+      ];
+      return `https://www.youtube.com/results?search_query=${encodeURIComponent(queries.join(" OR "))}`;
+    }
+
+    async function loadMovieDetails() {
+      try {
+        // Fetch movie details
+        const detailRes = await fetch(`${API_BASE}?endpoint=movie/${movieId}`);
+        const movie = await detailRes.json();
+
+        // Fetch credits
+        const creditsRes = await fetch(`${API_BASE}?endpoint=movie/${movieId}/credits`);
+        const credits = await creditsRes.json();
+
+        // Fetch providers
+        const providerRes = await fetch(`${API_BASE}?endpoint=movie/${movieId}/watch/providers`);
+        const providers = await providerRes.json();
+
+        const directors = credits.crew.filter(c => c.job === "Director").map(c => c.name).join(", ");
+        
+        // Filter for all music-related jobs and remove duplicates
+        const musicJobs = [
+          'Original Music Composer', 'Music', 'Music Director', 'Composer',
+          'Score', 'Sound', 'Soundtrack', 'Background Score', 'Additional Music', 'Songs'
+        ];
+        
+        const musicPeople = credits.crew
+          .filter(c => musicJobs.includes(c.job))
+          .map(c => c.name);
+        
+        const uniqueMusic = [...new Set(musicPeople)];
+        const music = uniqueMusic.join(', ');
+        
+        const cast = credits.cast.slice(0, 10).map(c => c.name).join(", ");
+
+        const trailer = await getTMDBVideoLink(movieId, movie);
+        const fullMovieLink = getFullMovieLink(movie);
+
+        let ottHTML = "Not available on OTT";
+        if (providers.results && providers.results.IN && providers.results.IN.flatrate) {
+          ottHTML = providers.results.IN.flatrate.map(p => {
+            const url = ottLinks[p.provider_name] || "#";
+            return `<a href="${url}" target="_blank">${p.provider_name}</a>`;
+          }).join(", ");
+        }
+
+        let songsHTML = "";
+        if (type === "music") {
+          const songSearch = encodeURIComponent(`${movie.title} Telugu full songs`);
+          songsHTML = `
+            <hr style="margin:20px 0;border-color:#444;">
+            <p><strong>Songs:</strong></p>
+            <ul>
+              <li>Original soundtrack composed by <strong>${music || "Music Director"}</strong></li>
+            </ul>
+            <p>
+              <a href="https://www.youtube.com/results?search_query=${songSearch}" target="_blank">
+                ▶ Watch Songs on YouTube
+              </a>
+            </p>
+          `;
+        }
+
+        document.getElementById("movie-detail").innerHTML = `
+          <h1>${movie.title} (${movie.release_date ? movie.release_date.split("-")[0] : ""})</h1>
+          <img class="poster" src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w300' + movie.poster_path : 'https://via.placeholder.com/300x450?text=No+Image'}">
+
+          <p><strong>Overview:</strong> ${movie.overview || "No description available."}</p>
+          <p><strong>Genres:</strong> ${movie.genres.map(g => g.name).join(", ")}</p>
+          <p><strong>Director:</strong> ${directors || "N/A"}</p>
+          <p><strong>Music:</strong> ${music || "N/A"}</p>
+          <p><strong>Cast:</strong> ${cast || "N/A"}</p>
+          <p><strong>Release Date:</strong> ${movie.release_date || "N/A"}</p>
+          <p><strong>Runtime:</strong> ${movie.runtime ? movie.runtime + " minutes" : "N/A"}</p>
+          <p><strong>Rating:</strong> ${movie.vote_average ? movie.vote_average.toFixed(1) + "/10" : "N/A"}</p>
+
+          <p><strong>Trailer:</strong>
+            <a href="${trailer.link}" target="_blank">${trailer.text}</a>
+          </p>
+
+          <p><strong>Full Movie:</strong>
+            <a href="${fullMovieLink}" target="_blank">Search on YouTube</a>
+          </p>
+
+          <p><strong>OTT Platforms:</strong> ${ottHTML}</p>
+
+          ${songsHTML}
+        `;
+        
+        document.querySelector('.loading').style.display = 'none';
+      } catch (error) {
+        document.getElementById("movie-detail").innerHTML = 
+          '<p style="text-align:center;color:gold;">Failed to load movie details</p>';
+        document.querySelector('.loading').style.display = 'none';
+      }
+    }
+
+    loadMovieDetails();
+  </script>
+</body>
+</html>

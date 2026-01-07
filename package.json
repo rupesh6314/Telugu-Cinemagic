@@ -1,0 +1,19 @@
+{
+  "name": "tfi-cinemagic",
+  "version": "1.0.0",
+  "description": "Telugu Film Industry Movie Database",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build process needed'",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.10.1"
+  },
+  "author": "TFI Fan",
+  "license": "MIT"
+}
