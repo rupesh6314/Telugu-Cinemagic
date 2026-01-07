@@ -64,7 +64,7 @@
     async function loadComedians() {
       for (const c of comedians) {
         try {
-          const res = await fetch(`${API_BASE}?endpoint=movie/${c.id}`)
+          const res = await fetch(`${API_BASE}?endpoint=person/${c.id}`)
           const data = await res.json();
           const imageUrl = data.profile_path 
             ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 

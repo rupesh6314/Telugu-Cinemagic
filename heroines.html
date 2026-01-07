@@ -84,7 +84,7 @@
     async function loadHeroines() {
       for (const h of heroines) {
         try {
-          const res = await fetch(`${API_BASE}?endpoint=movie/${h.id}`)
+          const res = await fetch(`${API_BASE}?endpoint=person/${h.id}`)
           const data = await res.json();
           const imageUrl = data.profile_path 
             ? `https://image.tmdb.org/t/p/w200${data.profile_path}` 
