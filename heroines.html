@@ -16,6 +16,19 @@
   <a href="index.html" class="back-link">← Back to Home</a>
   <h1>Famous Telugu Heroines</h1>
   <div class="loading">Loading Heroines...</div>
+  <div class="page-search">
+    <input 
+      type="text" 
+      id="pageSearch" 
+      placeholder="Search here..."
+      autocomplete="off"
+    >
+    <div id="suggestions" class="suggestions-box"></div>
+  </div>
+
+  <p id="noResults" class="no-results" style="display:none;">
+    🚫 No Results Found
+  </p>
   <div id="heroines-list" class="hero-grid"></div>
 
   <script>
@@ -106,6 +119,85 @@
     }
 
     loadHeroines();
+    /* =========================
+    ADVANCED PAGE SEARCH
+    ========================= */
+
+    const searchInput = document.getElementById("pageSearch");
+    const suggestionsBox = document.getElementById("suggestions");
+    const noResults = document.getElementById("noResults");
+
+    if (searchInput) {
+
+      const cards = document.querySelectorAll(".hero-card, .movie-card");
+
+      searchInput.addEventListener("input", function () {
+
+        const value = this.value.toLowerCase();
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+
+        let visibleCount = 0;
+        const suggestions = new Set();
+
+        cards.forEach(card => {
+
+          const originalText = card.innerText;
+          const text = originalText.toLowerCase();
+
+          card.classList.add("fade-card");
+
+          if (text.includes(value)) {
+
+            visibleCount++;
+            card.style.display = "block";
+            card.classList.remove("fade-out");
+            card.classList.add("fade-in");
+
+            // Highlight match
+            if (value.length > 0) {
+              const regex = new RegExp(`(${value})`, "gi");
+              card.innerHTML = card.innerHTML.replace(
+                regex,
+                `<span class="highlight">$1</span>`
+              );
+            }
+
+            suggestions.add(originalText.split("\n")[0]);
+
+          } else {
+            card.classList.add("fade-out");
+            setTimeout(() => card.style.display = "none", 200);
+          }
+        });
+
+        // Suggestions dropdown
+        if (value.length > 0 && suggestions.size > 0) {
+          suggestionsBox.style.display = "block";
+          suggestions.forEach(item => {
+            const div = document.createElement("div");
+            div.textContent = item;
+            div.onclick = () => {
+              searchInput.value = item;
+              searchInput.dispatchEvent(new Event("input"));
+              suggestionsBox.style.display = "none";
+            };
+            suggestionsBox.appendChild(div);
+          });
+        }
+
+        // No results message
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+
+      });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!e.target.closest(".page-search")) {
+          suggestionsBox.style.display = "none";
+        }
+      });
+    }
   </script>
 </body>
 </html>
