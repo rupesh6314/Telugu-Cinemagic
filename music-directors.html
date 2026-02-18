@@ -19,6 +19,19 @@
     The soul of Telugu cinema lives in its music. These maestros shaped emotions, memories, and generations.
   </p>
   <div class="loading">Loading Music Directors...</div>
+  <div class="page-search">
+    <input 
+      type="text" 
+      id="pageSearch" 
+      placeholder="Search here..."
+      autocomplete="off"
+    >
+    <div id="suggestions" class="suggestions-box"></div>
+  </div>
+
+  <p id="noResults" class="no-results" style="display:none;">
+    🚫 No Results Found
+  </p>
   <div id="music-list" class="hero-grid"></div>
 
   <script>
@@ -27,9 +40,13 @@
     const music = [
       { id: 1139299, name: "Ghantasala" },
       { id: 76888, name: "Ilaiyaraaja" },
+      { id: 584585, name: "S. P. Balasubrahmanyam"},
+      { id: 584606, name: "K. V. Mahadevan"},
       { id: 225318, name: "M.M Keeravani" },
       { id: 225317, name: "Mani Sharma" },
       { id: 591039, name: "Chakri" },
+      { id: 552984, name:"Saluri Koteswara Rao"},
+      { id: 2314682, name: "K. M. Radha Krishnan"},
       { id: 237681, name: "Devi Sri Prasad" },
       { id: 585344, name: "Thaman S" },
       { id: 2006306, name: "Ravi Basrur" },
@@ -40,6 +57,7 @@
       { id: 1540761, name: "Vishal Chandrashekharr" },
       { id: 1351359, name: "Bheems Ceciroleo" },
       { id: 1848072, name: "Hesham Abdul Wahab" },
+      { id: 1321732, name: "Sam C. S."},
       { id: 937682, name: "Ramana Gogula" },
       { id: 1340549, name: "Harshavardhan Rameshwar" },
       { id: 120944, name: "Harris Jayaraj" },
@@ -74,6 +92,85 @@
     }
 
     loadMusic();
+    /* =========================
+    ADVANCED PAGE SEARCH
+    ========================= */
+
+    const searchInput = document.getElementById("pageSearch");
+    const suggestionsBox = document.getElementById("suggestions");
+    const noResults = document.getElementById("noResults");
+
+    if (searchInput) {
+
+      const cards = document.querySelectorAll(".hero-card, .movie-card");
+
+      searchInput.addEventListener("input", function () {
+
+        const value = this.value.toLowerCase();
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+
+        let visibleCount = 0;
+        const suggestions = new Set();
+
+        cards.forEach(card => {
+
+          const originalText = card.innerText;
+          const text = originalText.toLowerCase();
+
+          card.classList.add("fade-card");
+
+          if (text.includes(value)) {
+
+            visibleCount++;
+            card.style.display = "block";
+            card.classList.remove("fade-out");
+            card.classList.add("fade-in");
+
+            // Highlight match
+            if (value.length > 0) {
+              const regex = new RegExp(`(${value})`, "gi");
+              card.innerHTML = card.innerHTML.replace(
+                regex,
+                `<span class="highlight">$1</span>`
+              );
+            }
+
+            suggestions.add(originalText.split("\n")[0]);
+
+          } else {
+            card.classList.add("fade-out");
+            setTimeout(() => card.style.display = "none", 200);
+          }
+        });
+
+        // Suggestions dropdown
+        if (value.length > 0 && suggestions.size > 0) {
+          suggestionsBox.style.display = "block";
+          suggestions.forEach(item => {
+            const div = document.createElement("div");
+            div.textContent = item;
+            div.onclick = () => {
+              searchInput.value = item;
+              searchInput.dispatchEvent(new Event("input"));
+              suggestionsBox.style.display = "none";
+            };
+            suggestionsBox.appendChild(div);
+          });
+        }
+
+        // No results message
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+
+      });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!e.target.closest(".page-search")) {
+          suggestionsBox.style.display = "none";
+        }
+      });
+    }
   </script>
 </body>
 </html>

@@ -16,16 +16,36 @@
   <a href="index.html" class="back-link">← Back to Home</a>
   <h1>Telugu Cinema Visionary Directors</h1>
   <div class="loading">Loading Directors...</div>
+  <div class="page-search">
+    <input 
+      type="text" 
+      id="pageSearch" 
+      placeholder="Search here..."
+      autocomplete="off"
+    >
+    <div id="suggestions" class="suggestions-box"></div>
+  </div>
+
+  <p id="noResults" class="no-results" style="display:none;">
+    🚫 No Results Found
+  </p>
   <div id="directors-list" class="hero-grid"></div>
 
   <script>
     const API_BASE = '/api/tmdb';    
     const directors = [
       { id: 1025757, name: "Bapu" },
+      { id: 584327, name: "Singeetam Srinivasa Rao"},
       { id: 544978, name: "K. Viswanath" },
       { id: 1335262, name: "Dasari Narayana Rao" },
+      { id: 928860, name: "Jandhyala Subramanya Sastry"},
+      { id: 552982, name: "Kodi Ramakrishna" },
+      { id: 1060277, name: "E.V.V. Satyanarayana" },
+      { id: 932644, name: "Gunasekhar" },
       { id: 237252, name: "K. Raghavendra Rao" },
       { id: 78747, name: "Mani Ratnam" },
+      { id: 237972, name:"K. Vijaya Bhaskar"},
+      { id: 1107230, name: "B Gopal" },
       { id: 76813, name: "Ram Gopal Varma" },
       { id: 932629, name: "Krishna Vamsi" },
       { id: 116923, name: "Trivikram Srinivas" },
@@ -33,9 +53,12 @@
       { id: 150527, name: "Boyapati Srinu" },
       { id: 237051, name: "Sukumar" },
       { id: 545155, name: "Harish Shankar" },
+      { id: 1298494, name:"Srinivas Avasarala" },
       { id: 148034, name: "V. V. Vinayak" },
       { id: 1168111, name: "Koratala Siva" },
       { id: 565889, name: "Ravi Babu" },
+      { id: 1201733, name:"Ajay Bhupathi"},
+      { id: 1267541, name:"Trinadha Rao Nakkina"},
       { id: 1879517, name: "Sandeep Reddy Vanga" },
       { id: 1454674, name: "Sujeeth" },
       { id: 1173569, name: "Srikanth Addala" },
@@ -49,6 +72,8 @@
       { id: 1964726, name: "Vivek Athreya" },
       { id: 1967161, name: "Prasanth Varma" },
       { id: 1673599, name: "Tharun Bhascker" },
+      { id: 1179683, name: "Maruthi"},
+      { id: 1846877, name: "Shiva Nirvana"},
       { id: 1963839, name: "venky Kudumla" },
       { id: 1013089, name: "Krish Jagarlamudi" },
       { id: 938964, name: "Parasuram" },
@@ -57,7 +82,6 @@
       { id: 2421032, name: "Buchi Babu Sana" },
       { id: 3853592, name: "Shouryuv" },
       { id: 1943117, name: "Gowtham Tinnanuri" },
-      { id: 1107230, name: "B Gopal" },
       { id: 89154, name: "Prabhu Deva" },
       { id: 1471076, name: "Karthik Ghattamaneni" },
       { id: 1135092, name: "Hanu Raghavapudi" },
@@ -92,6 +116,86 @@
     }
 
     loadDirectors();
+    /* =========================
+    ADVANCED PAGE SEARCH
+    ========================= */
+
+    const searchInput = document.getElementById("pageSearch");
+    const suggestionsBox = document.getElementById("suggestions");
+    const noResults = document.getElementById("noResults");
+
+    if (searchInput) {
+
+      const cards = document.querySelectorAll(".hero-card, .movie-card");
+
+      searchInput.addEventListener("input", function () {
+
+        const value = this.value.toLowerCase();
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+
+        let visibleCount = 0;
+        const suggestions = new Set();
+
+        cards.forEach(card => {
+
+          const originalText = card.innerText;
+          const text = originalText.toLowerCase();
+
+          card.classList.add("fade-card");
+
+          if (text.includes(value)) {
+
+            visibleCount++;
+            card.style.display = "block";
+            card.classList.remove("fade-out");
+            card.classList.add("fade-in");
+
+            // Highlight match
+            if (value.length > 0) {
+              const regex = new RegExp(`(${value})`, "gi");
+              card.innerHTML = card.innerHTML.replace(
+                regex,
+                `<span class="highlight">$1</span>`
+              );
+            }
+
+            suggestions.add(originalText.split("\n")[0]);
+
+          } else {
+            card.classList.add("fade-out");
+            setTimeout(() => card.style.display = "none", 200);
+          }
+        });
+
+        // Suggestions dropdown
+        if (value.length > 0 && suggestions.size > 0) {
+          suggestionsBox.style.display = "block";
+          suggestions.forEach(item => {
+            const div = document.createElement("div");
+            div.textContent = item;
+            div.onclick = () => {
+              searchInput.value = item;
+              searchInput.dispatchEvent(new Event("input"));
+              suggestionsBox.style.display = "none";
+            };
+            suggestionsBox.appendChild(div);
+          });
+        }
+
+        // No results message
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+
+      });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!e.target.closest(".page-search")) {
+          suggestionsBox.style.display = "none";
+        }
+      });
+    }
+
   </script>
 </body>
 </html>
