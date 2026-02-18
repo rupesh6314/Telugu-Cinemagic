@@ -16,6 +16,19 @@
   <a href="javascript:history.back()" class="back-link">← Back</a>
   <h1 id="heroName">Movies</h1>
   <div class="loading">Loading Movies...</div>
+  <div class="search-wrapper">
+    <input 
+      type="text" 
+      id="pageSearch" 
+      placeholder="Search..."
+      autocomplete="off"
+    >
+    <div id="searchSuggestions" class="suggestions-box"></div>
+  </div>
+
+  <p id="noResults" class="no-results" style="display:none;">
+    🚫 No Results Found
+  </p>
   <div class="movies-grid" id="movies"></div>
 
   <script>
@@ -98,6 +111,86 @@
       });
       return Object.values(unique);
     }
+    const searchInput = document.getElementById("pageSearch");
+    const suggestionsBox = document.getElementById("searchSuggestions");
+    const noResults = document.getElementById("noResults");
+
+    function getPageItems() {
+      return Array.from(document.querySelectorAll(".hero-card, .movie-card"));
+    }
+
+    function filterItems(value) {
+      const items = getPageItems();
+      let matchCount = 0;
+
+      items.forEach(card => {
+        const title = card.querySelector("h3")?.innerText.toLowerCase();
+        if (!title) return;
+
+        if (title.includes(value)) {
+          card.style.display = "block";
+          matchCount++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      noResults.style.display = matchCount === 0 ? "block" : "none";
+    }
+
+    function showSuggestions(value) {
+      suggestionsBox.innerHTML = "";
+      if (!value) {
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      const items = getPageItems();
+      const matches = [];
+
+      items.forEach(card => {
+        const title = card.querySelector("h3")?.innerText;
+        if (title && title.toLowerCase().includes(value)) {
+          matches.push(title);
+        }
+      });
+
+      if (matches.length === 0) {
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      matches.forEach(text => {
+        const div = document.createElement("div");
+        div.className = "suggestion-item";
+
+        const regex = new RegExp(`(${value})`, "gi");
+        div.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+
+        div.onclick = () => {
+          searchInput.value = text;
+          suggestionsBox.style.display = "none";
+          filterItems(text.toLowerCase());
+        };
+
+        suggestionsBox.appendChild(div);
+      });
+
+      suggestionsBox.style.display = "block";
+    }
+
+    searchInput.addEventListener("input", e => {
+      const value = e.target.value.toLowerCase().trim();
+
+      showSuggestions(value);
+      filterItems(value);
+    });
+
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".search-wrapper")) {
+        suggestionsBox.style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
