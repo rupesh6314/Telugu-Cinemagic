@@ -232,88 +232,62 @@ footer {
   }
 }
 
-/* ===============================
-   ADVANCED SEARCH
-================================ */
+/* ================= SEARCH ================= */
 
-.page-search {
-  text-align: center;
-  margin: 30px 0;
+.search-wrapper {
   position: relative;
+  max-width: 500px;
+  margin: 30px auto;
 }
 
-.page-search input {
-  width: 90%;
-  max-width: 500px;
-  padding: 12px 20px;
-  border-radius: 30px;
+#pageSearch {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 40px;
   border: 2px solid gold;
-  background: #111;
+  background: #0c1020;
   color: white;
   font-size: 16px;
   outline: none;
-  transition: 0.3s;
+  box-shadow: 0 0 20px rgba(255,215,0,0.4);
+  transition: 0.3s ease;
 }
 
-.page-search input:focus {
-  box-shadow: 0 0 15px gold;
+#pageSearch:focus {
+  box-shadow: 0 0 25px gold;
 }
 
-/* Suggestions dropdown */
 .suggestions-box {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 500px;
-  background: #1a1a1a;
-  border-radius: 10px;
-  margin-top: 5px;
-  z-index: 100;
-  max-height: 200px;
+  width: 100%;
+  background: #141a2f;
+  border-radius: 12px;
+  margin-top: 8px;
+  overflow: hidden;
+  z-index: 999;
+  max-height: 250px;
   overflow-y: auto;
   display: none;
-  border: 1px solid gold;
 }
 
-.suggestions-box div {
-  padding: 10px;
+.suggestion-item {
+  padding: 10px 15px;
   cursor: pointer;
-  border-bottom: 1px solid #333;
+  transition: 0.2s;
 }
 
-.suggestions-box div:hover {
-  background: gold;
-  color: black;
+.suggestion-item:hover {
+  background: rgba(255,215,0,0.2);
 }
 
-/* Highlight */
 .highlight {
-  background: gold;
-  color: black;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-/* Animation */
-.fade-card {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.fade-out {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.fade-in {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* No Results */
-.no-results {
-  text-align: center;
-  margin-top: 20px;
   color: gold;
   font-weight: bold;
+}
+
+.no-results {
+  text-align: center;
+  color: gold;
+  font-weight: bold;
+  margin-top: 10px;
 }
